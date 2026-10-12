@@ -8,7 +8,7 @@ This workspace publishes `@jong-kyung/oxlint-plugin` and `@jong-kyung/vp-config`
 - `packages/oxlint-plugin/src/index.ts` exports the custom plugin. Rule implementations and analysis helpers live alongside it in `rules/` and `analysis/`.
 - `packages/vp-config/src/plugin.ts` preserves the original plugin import path by re-exporting the standalone plugin.
 - `packages/oxlint-plugin/tests/` contains rule and analysis regressions, shared test helpers, and a CLI snapshot pilot for two rules.
-- `packages/vp-config/tests/` contains preset snapshots and shared release-version checks.
+- `.github/scripts/` verifies packed consumers and shared release versions. Static Vite+ preset objects do not have separate unit tests.
 
 ## Rule changes
 

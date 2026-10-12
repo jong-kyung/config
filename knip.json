@@ -1,8 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
-    "packages/*": {
+    "packages/oxlint-plugin": {
       "entry": ["src/*.ts", "tests/**/*.test.ts"]
+    },
+    "packages/vp-config": {
+      "entry": ["src/*.ts"]
     }
   }
 }
