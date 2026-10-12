@@ -8,23 +8,23 @@ Use the Node version in `.node-version`, which also selects the CI runtime. Inst
 vp install
 ```
 
-The package's supported Node range matches Vite+. Package manager settings are in `package.json`.
+Both packages use the existing Vite+ Node support range. Package manager settings are in the private root `package.json`. Workspace packages and shared dependency versions are in `pnpm-workspace.yaml`.
 
 ## Make changes
 
-Add regression cases in `tests/` when changing a rule. Custom rules are exported from `src/plugin.ts` and registered in `src/index.ts`. Native rule settings are in `src/native.ts`.
+Add regression cases in `tests/` when changing a rule. Custom rules and analysis helpers live in `packages/oxlint-plugin/src/`. Vite+ presets and rule settings live in `packages/vp-config/src/`. The Vite+ package depends on the plugin and preserves its original `./plugin` export.
 
 Run these checks before submitting changes:
 
 ```bash
+vp run build
 vp check
 vp run knip
 vp run duplication --baseline-from-ref origin/main
 vp test
-vp run build
 ```
 
-Knip checks unused files, exports, and dependencies. The duplication command scans `src` against the supplied Git ref. Existing clones are allowed. New clones or an unavailable baseline fail the check. Tests are outside the duplication scope.
+Knip checks unused files, exports, and dependencies. The duplication command scans package source against the supplied Git ref. Existing clones are allowed. New clones or an unavailable baseline fail the check. Tests are outside the duplication scope.
 
 ## Tests and snapshots
 
@@ -53,7 +53,8 @@ To inspect the package without publishing:
 
 ```bash
 vp run build
-vp pm pack --out /tmp/vp-config.tgz
+(cd packages/oxlint-plugin && vp pm pack --out /tmp/oxlint-plugin.tgz)
+(cd packages/vp-config && vp pm pack --out /tmp/vp-config.tgz)
 ```
 
 ## CI

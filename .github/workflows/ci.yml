@@ -39,6 +39,7 @@ jobs:
           cache: true
           run-install: false
       - run: vp install --frozen-lockfile
+      - run: vp run build
       - run: ${{ matrix.command }}
 
   duplication:

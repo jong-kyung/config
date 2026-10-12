@@ -1,5 +1,5 @@
 import type { RuleTester } from "vite-plus/lint/plugins-dev";
-import plugin from "../../src/plugin.ts";
+import plugin from "../../packages/oxlint-plugin/src/index.ts";
 import { tester } from "../helpers/rule-tester.ts";
 
 const cases = {

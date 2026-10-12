@@ -1,11 +1,12 @@
 # Project guidance
 
-This package provides shared Vite+ presets and custom lint rules. Its public presets are `nodeConfig` and `libConfig`.
+This workspace publishes `@jong-kyung/oxlint-plugin` and `@jong-kyung/vp-config` together. The Vite+ package provides the public presets `nodeConfig` and `libConfig`.
 
 ## Code layout
 
-- `src/index.ts` defines the presets and custom rule settings. `src/native.ts` defines native lint settings.
-- `src/plugin.ts` exports the custom plugin. Rule implementations live in `src/rules/` and share helpers in `src/analysis/`.
+- `packages/vp-config/src/index.ts` defines the presets and custom rule settings. `packages/vp-config/src/native.ts` defines native lint settings.
+- `packages/oxlint-plugin/src/index.ts` exports the custom plugin. Rule implementations and analysis helpers live alongside it in `rules/` and `analysis/`.
+- `packages/vp-config/src/plugin.ts` preserves the original plugin import path by re-exporting the standalone plugin.
 - `tests/` contains per-rule RuleTester regressions, external configuration snapshots, and a CLI snapshot pilot for two rules.
 
 ## Rule changes

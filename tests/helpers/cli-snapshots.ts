@@ -77,7 +77,9 @@ export function snapshotCliRule(
         lint: {
           categories: { correctness: "off" },
           plugins: [],
-          jsPlugins: [{ name: "jong-kyung", specifier: join(root, "src/plugin.ts") }],
+          jsPlugins: [
+            { name: "jong-kyung", specifier: join(root, "packages/oxlint-plugin/src/index.ts") },
+          ],
           overrides: fixtures.map((fixture) => ({
             files: [fixture.filename],
             rules: { [`jong-kyung/${name}`]: ["error", ...(fixture.options ?? [])] },

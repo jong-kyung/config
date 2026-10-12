@@ -1,7 +1,7 @@
 import { expect } from "vite-plus/test";
-import { defineRule } from "vite-plus/lint/plugins";
-import { TypeAnalysis } from "../src/analysis/type-analysis.ts";
-import { ArrayAnalysis } from "../src/analysis/array-analysis.ts";
+import { defineRule } from "@oxlint/plugins";
+import { TypeAnalysis } from "../packages/oxlint-plugin/src/analysis/type-analysis.ts";
+import { ArrayAnalysis } from "../packages/oxlint-plugin/src/analysis/array-analysis.ts";
 
 import { tester } from "./helpers/rule-tester.ts";
 

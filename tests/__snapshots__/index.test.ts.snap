@@ -31,7 +31,7 @@ exports[`public presets and fixable rules match the approved policy 1`] = `
           "jsPlugins": [
             {
               "name": "jong-kyung",
-              "specifier": "<root>/src/plugin.mjs",
+              "specifier": "<root>/packages/vp-config/src/plugin.mjs",
             },
           ],
           "options": {

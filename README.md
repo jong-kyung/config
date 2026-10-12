@@ -1,6 +1,11 @@
 # @jong-kyung/vp-config
 
-Shared Vite+ lint presets for Node applications and TypeScript libraries.
+This workspace publishes two packages with a shared version:
+
+- `@jong-kyung/oxlint-plugin` provides custom Oxlint rules without requiring Vite+.
+- `@jong-kyung/vp-config` provides Vite+ presets for Node applications and TypeScript libraries and includes the plugin.
+
+The existing `@jong-kyung/vp-config/plugin` import remains available.
 
 ## Install
 
