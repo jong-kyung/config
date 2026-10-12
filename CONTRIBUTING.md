@@ -12,7 +12,7 @@ Both packages use the existing Vite+ Node support range. Package manager setting
 
 ## Make changes
 
-Add regression cases in `tests/` when changing a rule. Custom rules and analysis helpers live in `packages/oxlint-plugin/src/`. Vite+ presets and rule settings live in `packages/vp-config/src/`. The Vite+ package depends on the plugin and preserves its original `./plugin` export.
+Add regression cases in `tests/` when changing a rule. Custom rules and analysis helpers live in `packages/oxlint-plugin/src/`. Vite+ presets and rule settings live in `packages/vp-config/src/`. The Vite+ package depends on the plugin and preserves its original `./plugin` export. The private root manifest records the shared release version. Both package manifests must match it, which is checked by `tests/packages.test.ts`.
 
 Run these checks before submitting changes:
 
@@ -23,6 +23,8 @@ vp run knip
 vp run duplication --baseline-from-ref origin/main
 vp test
 vp run test:packages
+bash .github/scripts/test-release-version.sh
+bash .github/scripts/test-publish-packages.sh
 ```
 
 Knip checks unused files, exports, and dependencies. The duplication command scans package source against the supplied Git ref. Existing clones are allowed. New clones or an unavailable baseline fail the check. Tests are outside the duplication scope.
@@ -60,6 +62,14 @@ vp run build
 
 ## CI
 
-CI builds both packages and runs `vp check`, Knip, Vitest, packed-consumer checks, and release-version checks on PRs, main pushes, manual runs, and Sundays at 02:00 UTC. Duplication checks run on PRs and main pushes.
+CI builds both packages and runs `vp check`, Knip, Vitest, packed-consumer checks, and release-script checks on PRs, main pushes, manual runs, and Sundays at 02:00 UTC. Duplication checks run on PRs and main pushes.
 
 [autofix.ci](https://autofix.ci/setup) receives changed file contents and commits fixes to PRs when its GitHub App is enabled. The workflow excludes `.github` paths from automatic fixes.
+
+## Releases
+
+The Prepare Release workflow updates the private root and both package manifests to the same version. Merging its release PR triggers checks, builds both tarballs, and verifies them before the release environment approval gate. The release workflow publishes `@jong-kyung/oxlint-plugin` first, then `@jong-kyung/vp-config`. Packing converts `workspace:*` into the exact shared plugin version. One `vVERSION` tag and GitHub release describe both packages.
+
+Configure npm trusted publishing for both package names to use `.github/workflows/release.yml` and the `release` environment. The new plugin package may require an authorized first publication before trusted publishing can be configured. Local validation does not create packages or configure npm permissions.
+
+npm does not publish multiple packages atomically. If publication stops after one package succeeds, rerun the failed release jobs for the same commit. The publication script skips existing versions and checks both dist-tags before publishing missing packages. It does not move tags backward. Its local test substitutes a fake npm registry and verifies ordering, partial-release recovery, already-published versions, stale versions and failure handling without publishing anything.

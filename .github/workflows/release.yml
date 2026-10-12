@@ -55,20 +55,19 @@ jobs:
 
           # Run npm outside the checkout's pnpm-only devEngines policy.
           cd "$RUNNER_TEMP"
-          if published="$(npm view "@jong-kyung/vp-config@$version" version 2>"$RUNNER_TEMP/npm-view.err")"; then
-            :
-          elif grep -q 'E404' "$RUNNER_TEMP/npm-view.err"; then
-            published=''
-          else
-            cat "$RUNNER_TEMP/npm-view.err" >&2
-            exit 1
-          fi
-          if [ -n "$published" ]; then
-            echo "$version is already published."
-            echo 'changed=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'changed=true' >> "$GITHUB_OUTPUT"
-          fi
+          changed=false
+          for package in oxlint-plugin vp-config; do
+            if published="$(npm view "@jong-kyung/$package@$version" version 2>"$RUNNER_TEMP/npm-view.err")"; then
+              :
+            elif grep -q 'E404' "$RUNNER_TEMP/npm-view.err"; then
+              published=''
+            else
+              cat "$RUNNER_TEMP/npm-view.err" >&2
+              exit 1
+            fi
+            if [ -z "$published" ]; then changed=true; fi
+          done
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
   ci:
     needs: check
@@ -78,7 +77,7 @@ jobs:
     uses: ./.github/workflows/ci.yml
 
   build:
-    name: Build and verify tarball
+    name: Build and verify tarballs
     needs: check
     if: needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
@@ -96,13 +95,18 @@ jobs:
           run-install: false
       - run: vp install --frozen-lockfile
       - run: vp run build
-      # pnpm resolves catalog: references in the manifest inside the tarball.
+      # pnpm resolves catalog: and workspace: references in the packed manifests.
+      - run: vp pm pack --out "$RUNNER_TEMP/oxlint-plugin.tgz"
+        working-directory: packages/oxlint-plugin
       - run: vp pm pack --out "$RUNNER_TEMP/vp-config.tgz"
-      - run: bash .github/scripts/smoke-package.sh "$RUNNER_TEMP/vp-config.tgz"
+        working-directory: packages/vp-config
+      - run: bash .github/scripts/smoke-package.sh "$RUNNER_TEMP/oxlint-plugin.tgz" "$RUNNER_TEMP/vp-config.tgz"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: package
-          path: ${{ runner.temp }}/vp-config.tgz
+          path: |
+            ${{ runner.temp }}/oxlint-plugin.tgz
+            ${{ runner.temp }}/vp-config.tgz
           if-no-files-found: error
 
   publish:
@@ -136,33 +140,22 @@ jobs:
         with:
           name: package
           path: ${{ runner.temp }}/package
-      - name: Verify this version advances its dist-tag
+      - name: Publish verified tarballs with npm trusted publishing
         run: |
           set -euo pipefail
-          tag="$(bash .github/scripts/release-version.sh "$VERSION")"
-          echo "tag=$tag" >> "$GITHUB_ENV"
-          cd "$RUNNER_TEMP"
-          if current="$(npm view "@jong-kyung/vp-config@$tag" version 2>"$RUNNER_TEMP/npm-view.err")"; then
-            :
-          elif grep -q 'E404' "$RUNNER_TEMP/npm-view.err"; then
-            current=''
-          else
-            cat "$RUNNER_TEMP/npm-view.err" >&2
-            exit 1
-          fi
-          bash "$GITHUB_WORKSPACE/.github/scripts/release-version.sh" "$VERSION" "$current"
-      - name: Publish the verified tarball with npm trusted publishing
-        working-directory: ${{ runner.temp }}
-        run: npm publish "$RUNNER_TEMP/package/vp-config.tgz" --access public --tag "$tag" --provenance --ignore-scripts
+          echo "tag=$(bash .github/scripts/release-version.sh "$VERSION")" >> "$GITHUB_ENV"
+          bash .github/scripts/publish-packages.sh "$VERSION" "$RUNNER_TEMP/package"
       - name: Create GitHub Release
         run: |
           set -euo pipefail
           flags=(--title "v$VERSION" --generate-notes --target "$GITHUB_SHA")
           if [ "$tag" = next ]; then flags+=(--prerelease); fi
-          gh release create "v$VERSION" "${flags[@]}"
+          if ! gh release view "v$VERSION" >/dev/null 2>&1; then
+            gh release create "v$VERSION" "${flags[@]}"
+          fi
 
   smoke:
-    name: Verify registry package
+    name: Verify registry packages
     needs: [check, publish]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -177,15 +170,15 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .node-version
-      - name: Install and import the published package
+      - name: Install and verify the published packages
         run: |
           set -euo pipefail
           for attempt in 1 2 3 4 5; do
-            if bash .github/scripts/smoke-package.sh "@jong-kyung/vp-config@$VERSION"; then
+            if bash .github/scripts/smoke-package.sh "@jong-kyung/oxlint-plugin@$VERSION" "@jong-kyung/vp-config@$VERSION"; then
               exit 0
             fi
             echo "Attempt $attempt failed; waiting for registry propagation."
             sleep 20
           done
-          echo '::error::Published package failed its import checks.'
+          echo '::error::Published packages failed their consumer checks.'
           exit 1

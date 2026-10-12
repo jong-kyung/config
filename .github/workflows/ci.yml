@@ -29,8 +29,8 @@ jobs:
             command: vp test
           - name: Packed consumers
             command: vp run test:packages
-          - name: Release versions
-            command: bash .github/scripts/test-release-version.sh
+          - name: Release scripts
+            command: bash .github/scripts/test-release-version.sh && bash .github/scripts/test-publish-packages.sh
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
