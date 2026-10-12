@@ -12,7 +12,6 @@
     "duplication": "jscpd . --pattern '**/src/**/*.ts' --min-tokens 50 --min-lines 5 --fail-on-new-clones"
   },
   "devDependencies": {
-    "@oxlint/plugins": "catalog:",
     "@types/node": "catalog:",
     "jscpd": "catalog:",
     "knip": "catalog:",

@@ -6,7 +6,7 @@ import type { UserConfig } from "vite-plus";
 import type { RuleTester } from "vite-plus/lint/plugins-dev";
 import { afterAll, beforeAll, describe, expect, test } from "vite-plus/test";
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
+const root = fileURLToPath(new URL("../../../../", import.meta.url));
 
 type CliCase = Pick<RuleTester.ValidTestCase, "code" | "name" | "options"> & {
   errors?: number;

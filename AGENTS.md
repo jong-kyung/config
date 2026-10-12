@@ -7,7 +7,8 @@ This workspace publishes `@jong-kyung/oxlint-plugin` and `@jong-kyung/vp-config`
 - `packages/vp-config/src/index.ts` defines the presets and custom rule settings. `packages/vp-config/src/native.ts` defines native lint settings.
 - `packages/oxlint-plugin/src/index.ts` exports the custom plugin. Rule implementations and analysis helpers live alongside it in `rules/` and `analysis/`.
 - `packages/vp-config/src/plugin.ts` preserves the original plugin import path by re-exporting the standalone plugin.
-- `tests/` contains per-rule RuleTester regressions, external configuration snapshots, and a CLI snapshot pilot for two rules.
+- `packages/oxlint-plugin/tests/` contains rule and analysis regressions, shared test helpers, and a CLI snapshot pilot for two rules.
+- `packages/vp-config/tests/` contains preset snapshots and shared release-version checks.
 
 ## Rule changes
 

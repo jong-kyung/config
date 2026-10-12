@@ -190,9 +190,6 @@ importers:
 
   .:
     devDependencies:
-      '@oxlint/plugins':
-        specifier: 'catalog:'
-        version: 1.79.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.4

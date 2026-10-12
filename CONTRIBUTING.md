@@ -12,7 +12,7 @@ Both packages use the existing Vite+ Node support range. Package manager setting
 
 ## Make changes
 
-Add regression cases in `tests/` when changing a rule. Custom rules and analysis helpers live in `packages/oxlint-plugin/src/`. Vite+ presets and rule settings live in `packages/vp-config/src/`. The Vite+ package depends on the plugin and preserves its original `./plugin` export. The private root manifest records the shared release version. Both package manifests must match it, which is checked by `tests/packages.test.ts`.
+Add regression cases in `packages/oxlint-plugin/tests/` when changing a rule. Custom rules and analysis helpers live in `packages/oxlint-plugin/src/`. Vite+ presets and rule settings live in `packages/vp-config/src/`. The Vite+ package depends on the plugin and preserves its original `./plugin` export. The private root manifest records the shared release version. Both package manifests must match it, which is checked by `packages/vp-config/tests/packages.test.ts`.
 
 Run these checks before submitting changes:
 
@@ -31,9 +31,9 @@ Knip checks unused files, exports, and dependencies. The duplication command sca
 
 ## Tests and snapshots
 
-Vitest discovers `tests/**/*.test.ts` through `vite.config.ts`. Each custom rule has a file in `tests/rules/`. Define its valid and invalid inputs once and run them with the shared RuleTester in `tests/helpers/rule-tester.ts`. Keep options, declaration filenames, local-analysis boundaries, directives, and exact line endings in regression cases. Remove a case only when its input, options, and verification purpose duplicate another case.
+The root `vite.config.ts` discovers `packages/*/tests/**/*.test.ts`, so `vp test` runs both packages. Run `vp test` from a package directory to test only that package. Each custom rule has a file in `packages/oxlint-plugin/tests/rules/`. Define its valid and invalid inputs once and run them with the shared RuleTester in `packages/oxlint-plugin/tests/helpers/rule-tester.ts`. Keep options, declaration filenames, local-analysis boundaries, directives, and exact line endings in regression cases. Remove a case only when its input, options, and verification purpose duplicate another case.
 
-Public preset settings, including native severities and options, are captured together in `tests/__snapshots__/index.test.ts.snap`. Only the checkout-specific plugin path is normalized. Keep explicit assertions for relationships such as plugin registration completeness, shared method identity, and unchanged output.
+Public preset settings, including native severities and options, are captured together in `packages/vp-config/tests/__snapshots__/index.test.ts.snap`. Only the checkout-specific plugin path is normalized. Keep explicit assertions for relationships such as plugin registration completeness, shared method identity, and unchanged output.
 
 The `no-runtime-typeof` and `prefer-jsdoc` suites also run the same inputs through the installed `vp lint` CLI. This is a limited snapshot pilot, not a replacement for RuleTester. Each suite writes its inputs to a temporary directory under `node_modules`, activates only the tested rule through native Vite+ overrides, and cleans up afterward. It does not build or install a consumer package and needs no network after dependency installation.
 
@@ -44,8 +44,8 @@ Original diagnostics are collected before `--fix`, because that command reports 
 Review snapshot diffs as behavior changes. Update only the affected suite after checking its inputs and intended results, then rerun without update mode:
 
 ```bash
-vp test tests/rules/prefer-jsdoc.test.ts --update
-vp test tests/rules/prefer-jsdoc.test.ts
+vp test packages/oxlint-plugin/tests/rules/prefer-jsdoc.test.ts --update
+vp test packages/oxlint-plugin/tests/rules/prefer-jsdoc.test.ts
 ```
 
 Keep the pilot limited to these two rules until diagnostic accuracy, repeatability, runtime, and maintenance cost have been evaluated. The CLI helper currently supports code, names, options, numeric error counts, and optional fixed output. Extend its contract explicitly before using cases with custom filenames, parser settings, or hooks.

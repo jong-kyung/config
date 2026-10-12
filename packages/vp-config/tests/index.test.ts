@@ -1,12 +1,12 @@
 import { fileURLToPath } from "node:url";
 import { expect, test } from "vite-plus/test";
-import { libConfig, nodeConfig } from "../packages/vp-config/src/index.ts";
-import { nativeLint } from "../packages/vp-config/src/native.ts";
-import plugin from "../packages/oxlint-plugin/src/index.ts";
+import { libConfig, nodeConfig } from "../src/index.ts";
+import { nativeLint } from "../src/native.ts";
+import plugin from "@jong-kyung/oxlint-plugin";
 
 const lint = nodeConfig.lint.extends[0]!;
 
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = fileURLToPath(new URL("../../../", import.meta.url));
 
 expect.addSnapshotSerializer({
   test: (value): value is string => typeof value === "string" && value.startsWith(root),

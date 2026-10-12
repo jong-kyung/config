@@ -13,7 +13,7 @@ export default mergeConfig(
   {
     staged: { "*": "vp check --fix" },
     test: {
-      include: ["tests/**/*.test.ts"],
+      include: ["packages/*/tests/**/*.test.ts"],
     },
   },
 );
