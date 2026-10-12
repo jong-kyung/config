@@ -22,6 +22,7 @@ vp check
 vp run knip
 vp run duplication --baseline-from-ref origin/main
 vp test
+vp run test:packages
 ```
 
 Knip checks unused files, exports, and dependencies. The duplication command scans package source against the supplied Git ref. Existing clones are allowed. New clones or an unavailable baseline fail the check. Tests are outside the duplication scope.
@@ -47,7 +48,7 @@ vp test tests/rules/prefer-jsdoc.test.ts
 
 Keep the pilot limited to these two rules until diagnostic accuracy, repeatability, runtime, and maintenance cost have been evaluated. The CLI helper currently supports code, names, options, numeric error counts, and optional fixed output. Extend its contract explicitly before using cases with custom filenames, parser settings, or hooks.
 
-Packed-consumer installation, consumer library builds, type-checking integration, CLI exit-code policy, and Git staging behavior are no longer covered by the test suite. Configuration snapshots do not replace those integration checks.
+`vp run test:packages` builds and packs both workspace packages, then installs the tarballs in a temporary project outside this workspace. It checks plugin imports and declarations without Vite+, explicit rule activation, diagnostics and autofixes with Oxlint 1.85.0. It then installs the Vite+ package and verifies the compatibility export, shared version, declarations and actual preset linting. This check needs registry access. Consumer library builds and Git staging behavior remain outside the test suite.
 
 To inspect the package without publishing:
 
@@ -59,6 +60,6 @@ vp run build
 
 ## CI
 
-CI runs `vp check`, Knip, Vitest, and release-version checks on PRs, main pushes, manual runs, and Sundays at 02:00 UTC. Duplication checks run on PRs and main pushes.
+CI builds both packages and runs `vp check`, Knip, Vitest, packed-consumer checks, and release-version checks on PRs, main pushes, manual runs, and Sundays at 02:00 UTC. Duplication checks run on PRs and main pushes.
 
 [autofix.ci](https://autofix.ci/setup) receives changed file contents and commits fixes to PRs when its GitHub App is enabled. The workflow excludes `.github` paths from automatic fixes.

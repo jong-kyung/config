@@ -5,6 +5,7 @@
   "scripts": {
     "build": "vp run --filter './packages/*' build",
     "test": "vp test",
+    "test:packages": "bash .github/scripts/test-packages.sh",
     "check": "vp check",
     "knip": "knip",
     "duplication": "jscpd . --pattern '**/src/**/*.ts' --min-tokens 50 --min-lines 5 --fail-on-new-clones"

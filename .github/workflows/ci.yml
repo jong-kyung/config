@@ -27,6 +27,8 @@ jobs:
             command: vp run knip
           - name: Test
             command: vp test
+          - name: Packed consumers
+            command: vp run test:packages
           - name: Release versions
             command: bash .github/scripts/test-release-version.sh
     steps:
