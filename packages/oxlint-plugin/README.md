@@ -19,4 +19,4 @@ Run `npx oxlint .`. Registration does not enable rules. The package exports a de
 
 Verified with Oxlint 1.85.0. Requires Node `^22.18.0 || ^24.11.0 || >=26.0.0` and ESM.
 
-See the [usage and rule guide](https://github.com/jong-kyung/vp-config#readme) for all rules and options.
+See the [usage and rule guide](https://github.com/jong-kyung/config#readme) for all rules and options.

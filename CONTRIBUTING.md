@@ -70,6 +70,4 @@ CI builds both packages and runs `vp check`, Knip, Vitest, packed-consumer check
 
 The Prepare Release workflow updates the private root and both package manifests to the same version. Merging its release PR triggers checks, builds both tarballs, and verifies them before the release environment approval gate. The release workflow publishes `@jong-kyung/oxlint-plugin` first, then `@jong-kyung/vp-config`. Packing converts `workspace:*` into the exact shared plugin version. One `vVERSION` tag and GitHub release describe both packages.
 
-Configure npm trusted publishing for both package names to use `.github/workflows/release.yml` and the `release` environment. The new plugin package may require an authorized first publication before trusted publishing can be configured. Local validation does not create packages or configure npm permissions.
-
 npm does not publish multiple packages atomically. If publication stops after one package succeeds, rerun the failed release jobs for the same commit. The publication script skips existing versions and checks both dist-tags before publishing missing packages. It does not move tags backward. Its local test substitutes a fake npm registry and verifies ordering, partial-release recovery, already-published versions, stale versions and failure handling without publishing anything.
