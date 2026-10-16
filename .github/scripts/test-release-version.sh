@@ -21,4 +21,13 @@ for version in 1.2.3 1.2.2 1.2.3-rc.1; do
   fi
 done
 
+node --input-type=module <<'NODE'
+import assert from 'node:assert/strict';
+import workspace from '../../package.json' with { type: 'json' };
+import plugin from '../../packages/oxlint-plugin/package.json' with { type: 'json' };
+import preset from '../../packages/vp-config/package.json' with { type: 'json' };
+assert.equal(plugin.version, workspace.version);
+assert.equal(preset.version, workspace.version);
+NODE
+
 echo 'Release version checks passed.'

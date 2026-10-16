@@ -42,22 +42,24 @@ jobs:
           branch="release/v$VERSION"
           node --input-type=module <<'NODE'
           import { readFileSync, writeFileSync } from 'node:fs';
-          const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
-          pkg.version = process.env.VERSION;
-          writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          for (const path of ['package.json', 'packages/oxlint-plugin/package.json', 'packages/vp-config/package.json']) {
+            const pkg = JSON.parse(readFileSync(path, 'utf8'));
+            pkg.version = process.env.VERSION;
+            writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+          }
           NODE
 
           remote="$(git ls-remote --heads origin "$branch")"
           if [ -n "$remote" ]; then
             git fetch origin "$branch:refs/remotes/origin/$branch"
             # Reuse only an identical version-only change; never rewrite a branch.
-            git diff --exit-code "origin/$branch" -- package.json
-            git diff --exit-code "main...origin/$branch" -- . ':!package.json'
+            git diff --exit-code "origin/$branch" -- package.json packages/oxlint-plugin/package.json packages/vp-config/package.json
+            git diff --exit-code "main...origin/$branch" -- . ':!package.json' ':!packages/oxlint-plugin/package.json' ':!packages/vp-config/package.json'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git switch -c "$branch"
-            git add package.json
+            git add package.json packages/oxlint-plugin/package.json packages/vp-config/package.json
             git commit -m "release: v$VERSION"
             git push origin "$branch"
           fi
@@ -72,8 +74,8 @@ jobs:
           fi
           gh pr create --draft --base main --head "$branch" \
             --title "release: v$VERSION" \
-            --body "Bumps the package version to $VERSION.
+            --body "Bumps both package versions to $VERSION.
 
-          Mark this PR ready for review and merge it to start the release workflow. Publication requires checks, tests, a verified package tarball, and approval in the release environment.
+          Mark this PR ready for review and merge it to start the release workflow. Publication requires checks, tests, two verified package tarballs, and approval in the release environment.
 
           GITHUB_TOKEN does not trigger pull request CI. The release workflow runs CI on the merge commit before publication. If branch protection requires PR checks, a maintainer must close and reopen this PR to trigger them."

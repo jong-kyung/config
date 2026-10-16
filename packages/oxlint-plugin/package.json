@@ -1,0 +1,41 @@
+{
+  "name": "@jong-kyung/oxlint-plugin",
+  "version": "0.1.0",
+  "description": "Custom Oxlint rules for TypeScript projects.",
+  "homepage": "https://github.com/jong-kyung/vp-config#readme",
+  "bugs": {
+    "url": "https://github.com/jong-kyung/vp-config/issues"
+  },
+  "license": "MIT",
+  "author": "jong-kyung",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jong-kyung/vp-config.git",
+    "directory": "packages/oxlint-plugin"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@oxlint/plugins": "catalog:"
+  },
+  "engines": {
+    "node": "^22.18.0 || ^24.11.0 || >=26.0.0"
+  }
+}

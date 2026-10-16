@@ -21,6 +21,7 @@ jobs:
           cache: true
           run-install: false
       - run: vp install --frozen-lockfile
+      - run: vp run build
       # The service rejects any fix containing .github changes. CI still checks those files.
       - name: Apply fixes outside .github
         run: git ls-files -z -- . ':(exclude)*.github*' | xargs -0 -r vp check --fix --

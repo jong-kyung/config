@@ -27,8 +27,10 @@ jobs:
             command: vp run knip
           - name: Test
             command: vp test
-          - name: Release versions
-            command: bash .github/scripts/test-release-version.sh
+          - name: Packed consumers
+            command: vp run test:packages
+          - name: Release scripts
+            command: bash .github/scripts/test-release-version.sh && bash .github/scripts/test-publish-packages.sh
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -39,6 +41,7 @@ jobs:
           cache: true
           run-install: false
       - run: vp install --frozen-lockfile
+      - run: vp run build
       - run: ${{ matrix.command }}
 
   duplication:
