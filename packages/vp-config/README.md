@@ -16,4 +16,4 @@ export default nodeConfig;
 
 Use `libConfig` for library packaging defaults. The `@jong-kyung/vp-config/plugin` export remains available for compatibility. Projects without Vite+ can install `@jong-kyung/oxlint-plugin` directly.
 
-See the [usage and rule guide](https://github.com/jong-kyung/vp-config#readme) for customization and all rules.
+See the [usage and rule guide](https://github.com/jong-kyung/config#readme) for customization and all rules.

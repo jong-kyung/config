@@ -14,7 +14,7 @@ concurrency:
 jobs:
   check:
     name: Check version
-    if: github.repository == 'jong-kyung/vp-config'
+    if: github.repository == 'jong-kyung/config'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
